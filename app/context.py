@@ -2,6 +2,7 @@ import logging
 import typing as tp
 from app.yaml_reader import YamlReader
 from balance.abstract import AbstractBalancer
+from balance.mixins import HealthCheckMixin
 
 logger = logging.getLogger(__name__)
 
@@ -18,4 +19,5 @@ class AppContext:
         self.balancer = self.balancer_class(config["hosts"])
 
     async def on_shutdown(self, app=None):
-        pass
+        if issubclass(self.balancer_class, HealthCheckMixin):
+            self.balancer.running = False

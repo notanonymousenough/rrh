@@ -1,4 +1,5 @@
 from balance.roundrobin import RoundRobinBalancer
+from balance.roundrobinplus import RoundRobinPlusBalancer
 
 
 class BalancerFactory:
@@ -7,4 +8,6 @@ class BalancerFactory:
         match arg:
             case "rr":
                 return RoundRobinBalancer
+            case "rr+":
+                return RoundRobinPlusBalancer
         raise ValueError("Balancer not found")
