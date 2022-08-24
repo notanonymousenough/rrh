@@ -9,19 +9,12 @@ from app.context import AppContext
 logger = logging.getLogger(__name__)
 
 
-def wrap_handler(handler):
-    async def wrapper(self, request):
-        return await handler(self, request, "http://localhost:8080")
-
-    return wrapper
-
-
 class ProxyHandler:
     def __init__(self, ctx: AppContext):
         self.ctx = ctx
 
-    @wrap_handler
-    async def handle(self, request: web.Request, target_server_base_url: str) -> web.Response:
+    async def handle(self, request: web.Request) -> web.Response:
+        target_server_base_url = self.ctx.balancer.select_host().name
         request_id = random.randint(1, 2 ^ 16)
 
         target_url = urljoin(target_server_base_url, request.match_info['path'])
